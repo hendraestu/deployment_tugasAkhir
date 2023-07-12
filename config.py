@@ -3,12 +3,13 @@ import os
 basedir = os.path.dirname(os.path.abspath(__file__))
 
 class Config(object):
-    HOST = "localhost"
-    DATABASE = "sentimen"
+    HOST = "containers-us-west-36.railway.app"
+    DATABASE = "railway"
     USERNAME = "root"
-    PASSWORD = "hendra24"
+    PASSWORD = "MCAGX5G9ix9aVMtzraLQ"
+    PORT = "7808"
     JWT_SECRET_KEY = str(os.environ.get("JWT_SECRET"))
-    SQLALCHEMY_DATABASE_URI = 'mysql://'+USERNAME+':'+PASSWORD+'@'+HOST+'/'+DATABASE
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://'+USERNAME+':'+PASSWORD+'@'+HOST+':'+PORT+'/'+DATABASE
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
