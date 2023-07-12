@@ -1,0 +1,83 @@
+{% extends 'baseUser.html'%}
+{% block content%}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+<main id="main" class="main" style="width: 100%; margin: 0%;">
+   <section class="section dashboard">
+      <div class="row">
+         <div class="col">
+            <div class="card">
+               <div class="card-body">
+                  <h5 class="card-title">Pilihan Tokoh Publik</h5>
+                  <div class="mySwiper">
+                     <div class="swiper-wrapper">
+                     {% for x in image %}
+                       <div class="swiper-slide">
+                        <img src="{{x.image}}" alt="" onclick="window.location.href='{{url_for('tokohByIds', id=x.id)}}';">
+                       </div>
+                     {% endfor %} 
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col">
+                  <div class="card">
+                     <div class="card-body">
+                        <h5 class="card-title">Hasil Sentimen</h5>
+                        <div id="columnChart"></div>
+                           <script>document.addEventListener("DOMContentLoaded", () => {
+                              new ApexCharts(document.querySelector("#columnChart"), {
+                                 series: [{
+                                    name: 'Positif',
+                                    data: ['{{data.positif}}']
+                                 }, {
+                                    name: 'Netral',
+                                    data: ['{{data.netral}}']
+                                 }, {
+                                    name: 'Negatif',
+                                    data: ['{{data.negatif}}']
+                                 }],
+                                    chart: {
+                                    type: 'bar',
+                                    height: 250,
+                                    stacked: true,
+                                    stackType: '100%'
+                                 },
+                                 plotOptions: {
+                                    bar: {
+                                       horizontal: true,
+                                    },
+                                 },
+                                 stroke: {
+                                    width: 1,
+                                    colors: ['#fff']
+                                 },
+                                 title: {
+                                    text: '{{data.nama}}'
+                                 },
+                                 xaxis: {
+                                    categories: ['Sentimen'],
+                                 },
+                                 fill: {
+                                    opacity: 1
+                                 
+                                 },
+                                 legend: {
+                                    position: 'top',
+                                    horizontalAlign: 'left',
+                                    offsetX: 40
+                                 }
+                              }).render();
+                              });
+                           </script>
+                        </div> 
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+{%endblock%}
