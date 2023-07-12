@@ -1,0 +1,239 @@
+{% extends 'base.html'%}
+{% block content%}
+<aside id="sidebar" class="sidebar">
+   <ul class="sidebar-nav" id="sidebar-nav">
+      <li class="nav-item"> <a class="nav-link collapsed" href="/admin-dashboard"> <i class="bi bi-grid"></i> <span>Dashboard</span> </a></li>
+      <li class="nav-item">
+         <a class="nav-link " data-bs-target="#components-nav" data-bs-toggle="collapse" href="#"> <i class="bi bi-menu-button-wide"></i><span>Data</span><i class="bi bi-chevron-down ms-auto"></i> </a>
+         <ul id="components-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+            <li> <a href="/buatModel"> <i class="bi bi-circle"></i><span>Buat Model</span> </a></li>
+            <li> <a href="/updatedata" class="active"> <i class="bi bi-circle"></i><span>Perbarui Data Sentimen</span> </a></li>
+         </ul>
+      </li>
+      <li class="nav-heading">Halaman</li>
+      <li class="nav-item"> <a class="nav-link collapsed" href="/logout"> <i class="bi bi-box-arrow-in-right"></i> <span>Keluar</span> </a></li>
+   </ul>
+</aside>
+<main id="main" class="main">
+   <div class="pagetitle">
+      <h1>Perbarui Data</h1>
+      <nav>
+         <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+            <li class="breadcrumb-item">Data</li>
+            <li class="breadcrumb-item active">Perbarui Data</li>
+         </ol>
+      </nav>
+   </div>
+   {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger alert-dismissible" role="alert">
+         <button type="button" class="close" data-dismiss="alert" aria-label="Close" onclick="hideAlert(this)"><span aria-hidden="true">×</span></button>
+                {{message}}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+   <section class="section">
+      <div class="row">
+         <div class="col-lg">
+            <div class="card">
+               <div class="card-body">
+                  <h5 class="card-title">Tokoh Publik</h5>
+                  <form action="/updateData" enctype="multipart/form-data" id="inputForm" method="PUT">
+                     <div class="row">
+                        <div class="col">
+                           <select class="form-select" aria-label="Default select example" id="selectNama">
+                              <option selected>Pilih Tokoh Publik</option>
+                              {% for x in data %}
+                              <option value="{{x.id}}">{{x.nama}}</option>
+                              {% endfor %}
+                           </select>
+                        </div>
+                        <!-- <div class="row mb-3">
+                           <div class="col-12"> <label for="inputNanme4" class="form-label">positif</label> <input type="text" class="form-control" name="positif"></div>
+                        </div>
+                        <div class="row mb-3">
+                           <div class="col-12"> <label for="inputNanme4" class="form-label">negatif</label> <input type="text" class="form-control" name="negatif"></div>
+                        </div>
+                        <div class="row mb-3">
+                           <div class="col-12"> <label for="inputNanme4" class="form-label">netral</label> <input type="text" class="form-control" name="netral"></div>
+                        </div> -->
+                        <input type="hidden" name="id" id="inputID">
+                        <input type="hidden" id="inputNama" name="nama">
+
+                        <div class="row mb-3">
+                           <div class="col-sm-10"> <button type="submit" id="submit" class="btn btn-primary">Perbarui</button></div>
+                        </div>
+                  </form>
+               </div>
+            </div>
+            <div class="row">
+               <div class="col">
+                  <div class="card">
+                     <div class="card-body">
+                        <h5 class="card-title">Hasil Sentimen</h5>
+                        <table class="table table-striped">
+                           <thead>
+                              <tr>
+                                <th scope="col">Nama</th>
+                                <th scope="col">Positif</th>
+                                <th scope="col">Negatif</th>
+                                <th scope="col">Netral</th>
+                                <th scope="col">Akurasi</th>
+                                <th scope="col">Diperbarui</th>
+                                <th scope="col">Hapus</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {%for x in data%}
+                            <tr>
+                              <td>{{x.nama}}</td>
+                              <td>{{x.positif}}</td>
+                              <td>{{x.negatif}}</td>
+                              <td>{{x.netral}}</td>
+                              <td>{{x.akurasi}}</td>
+                              <td>{{x.update_at}}</td>
+                              <td>
+                                 <a href="/hapusTokoh/{{x.id}}" class="btn btn-danger hapusTokoh" data-url="/hapusTokoh/{{x.id}}">Hapus</a>
+                               </td>                                                                    
+                            </tr>
+                            {%endfor%}
+                          </tbody>
+                        </table>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </section>
+   <div class="loader-modal" id="loaderModal">
+      <div class="card text-center">
+         <div class="card-body">
+           <h5 class="card-title">Harap tunggu proses</h5>
+           <div class="loader-content">
+               <div class="loader"></div>
+               <p>Loading...</p>
+               <!-- <button class="btn btn-danger" onclick="cancelLoading()">Batal</button> -->
+            </div>
+         </div>
+      </div>
+  </div>
+</main>
+<script>
+   function hideAlert(button) {
+      button.parentElement.remove();
+   }
+   // Menghilangkan alert setelah 5 detik
+   setTimeout(function() {
+      document.getElementById('alert').remove();
+   }, 5000);
+
+   document.getElementById('selectNama').addEventListener('change', function() {
+      var selectedOption = this.options[this.selectedIndex];
+      document.getElementById('inputID').value = selectedOption.value;
+      document.getElementById('inputNama').value = selectedOption.text;
+   });
+   // Mengatur nilai awal inputNama saat halaman dimuat
+   window.addEventListener('DOMContentLoaded', function() {
+      var selectedOption = document.getElementById('selectNama').options[0];
+      document.getElementById('inputNama').value = selectedOption.text;
+   });
+
+   document.getElementById("inputForm").addEventListener("submit", function(event) {
+   event.preventDefault(); // Mencegah form untuk melakukan submit
+   document.getElementById('loaderModal').style.display = 'block';
+
+   var form = document.getElementById("inputForm");
+   var formData = new FormData(form);
+
+   fetch("/updateData", {
+      method: "PUT",
+      body: formData
+   })
+   .then(function(response) {
+      if (response.ok) {
+         Swal.fire({
+         icon: 'success',
+         title: 'Berhasil!',
+         text: 'Berhasil memperbarui.'
+      });
+      } else {
+         Swal.fire({
+         icon: 'error',
+         title: 'Gagal!',
+         text: error.message
+      });
+      }
+   })
+
+      document.getElementById('loaderModal').style.display = 'none';
+});
+
+// Menangkap tombol hapus tokoh
+const linkHapusTokoh = document.querySelector('.hapusTokoh');
+
+// Tambahkan event listener untuk klik pada tombol hapus tokoh
+linkHapusTokoh.addEventListener('click', function(e) {
+  e.preventDefault(); // Menghentikan tindakan default dari tautan
+  
+  // Menampilkan pesan SweetAlert saat tautan diklik
+  swal({
+    title: "Apakah Anda yakin?",
+    text: "Data tokoh akan dihapus secara permanen!",
+    icon: "warning",
+    buttons: ["Batal", "Ya, hapus"],
+    dangerMode: true,
+  }).then((willDelete) => {
+    // Aksi yang dijalankan jika pengguna mengklik tombol "Ya, hapus"
+    if (willDelete) {
+      // Ambil URL hapus dari atribut data-url tautan
+      const url = linkHapusTokoh.getAttribute('data-url');
+      // Lakukan aksi penghapusan data dengan mengarahkan ke URL hapus
+      window.location.href = url;
+    } else {
+      // Aksi yang dijalankan jika pengguna mengklik tombol "Batal"
+      swal("Penghapusan data tokoh dibatalkan.", "", "info");
+    }
+  });
+});
+
+
+</script>
+
+<!-- <script>
+ document.getElementById("cekid").addEventListener("change", function() {
+  
+   var cekid = $("[name='cekid']").val();
+      $("[name='nama']").val("{{data.nama}}")
+      $("[nama='id']").val(cekid)
+      
+   console.log("{{data.nama}}")
+      });
+   function send(){
+   var id = $("[name='id']").val();
+   console.log(id)
+   var nama = $("[name='nama']").val();
+   console.log(nama)
+   var positif = $("[name='positif']").val();
+   var negatif = $("[name='negatif']").val();
+   var netral = $("[name='netral']").val();
+	$.ajax({
+	  url: '/updateData',
+	  type: 'PUT',
+	  dataType: 'json',
+	  data: {'id':id,'nama':nama,'positif':positif,'negatif':negatif,'netral':netral},
+	  success: function(msg) {
+	    // alert(segitiga);
+	    console.log(data)
+	  },
+	  error: function(msg) {
+	    alert(msg);
+	  }
+	});
+}
+</script> -->
+{%endblock%}
