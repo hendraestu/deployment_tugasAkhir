@@ -26,7 +26,8 @@ MarkupSafe
 marshmallow
 marshmallow-sqlalchemy
 mysql-connector-python
-mysqlclientnltk
+mysqlclient
+nltk
 numpy
 packaging
 pandas
