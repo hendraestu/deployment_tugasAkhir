@@ -2,7 +2,7 @@ from flask import request, jsonify, flash
 from flask.templating import render_template
 from app import app
 import os
-import snscrape.modules.twitter as sntwitter
+#import snscrape.modules.twitter as sntwitter
 import emoji
 import pandas as pd
 import config
