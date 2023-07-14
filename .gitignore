@@ -4,3 +4,4 @@ __pycache__/
 env/
 backup/
 flask_session/
+requirement.txt
